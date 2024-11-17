@@ -1,0 +1,21 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #e4e4e4;
+}
+
+.logo {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 36px;
+}
+
+.menu {
+  border-bottom: none;
+  margin-right: 300px;
+}
+
+.userMenu {
+  border-inline-end: none !important;
+}

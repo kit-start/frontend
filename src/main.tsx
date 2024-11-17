@@ -1,10 +1,14 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import App from "./App";
-import "./index.scss";
-import { store } from "./store/store";
+import { BrowserRouter } from "react-router-dom";
 
+import { store } from "./store/store";
+import App from "./App";
+
+import "./index.scss";
+
+// eslint-disable-next-line no-undef
 const container = document.getElementById("root");
 
 if (container) {
@@ -13,7 +17,9 @@ if (container) {
 	root.render(
 		<React.StrictMode>
 			<Provider store={store}>
-				<App />
+				<BrowserRouter>
+					<App/>
+				</BrowserRouter>
 			</Provider>
 		</React.StrictMode>,
 	);

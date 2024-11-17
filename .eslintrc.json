@@ -1,7 +1,6 @@
 {
   "extends": [
     "eslint:recommended",
-    "react-app",
     "plugin:react/jsx-runtime",
     "prettier"
   ],

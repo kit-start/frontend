@@ -1,0 +1,20 @@
+{
+  "projects": [
+    {
+      "project_id": 1,
+      "name": "HabitBoost",
+      "field_name": "IT",
+      "created_at": "2024-11-27",
+      "edited_at": "2024-11-27",
+      "progress": 70
+    },
+    {
+      "project_id": 2,
+      "name": "FamilyFund",
+      "field_name": "IT",
+      "created_at": "2024-11-27",
+      "edited_at": "2024-11-27",
+      "progress": 20
+    }
+  ]
+}

@@ -1,24 +1,26 @@
-import React from "react";
 import { Progress } from "antd";
-import "./ProgressBar.css"; 
+
+import styles from "./ProgressBar.module.scss";
+
+import type { FC } from "react";
 
 interface SimpleProgressBarProps {
   projectName: string;
   progress: number;
 }
 
-const SimpleProgressBar: React.FC<SimpleProgressBarProps> = ({ progress }) => {
+const SimpleProgressBar: FC<SimpleProgressBarProps> = ({ progress, projectName }) => {
   return (
-    <div style={{ width: '100%', textAlign: 'center', margin: '10px 0' }}>
-        <h3>Название проекта</h3>
+    <div className={styles.simpleContainer}>
+        <h3>{projectName}</h3>
       <Progress
         percent={progress}
         status="active"
         strokeColor={{ from: "#108ee9", to: "#87d068" }}
-        style={{ width: '70%' }} 
+        className={styles.progress}
       />
       <div style={{ fontSize: '12px', marginTop: '5px' }}>
-        <p>ГОТОВНОСТЬ ПРОЕКТА</p>
+        <span className={styles.progressTitle}>Прогресс проекта</span>
       </div>
     </div>
   );

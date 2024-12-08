@@ -1,0 +1,26 @@
+.card {
+  width: 100%;
+  padding: 16px;
+  border-bottom: 1px solid #000;
+  gap: 16px
+}
+
+.cardTitle {
+  margin: 0 0 5px 0;
+}
+
+.cardDate {
+  color: #4E4E4E;
+  margin: 5px 0 0 0;
+}
+
+.cardProgress {
+  height: 20px;
+  margin: 0 0 0 auto;
+}
+
+.cardProgressTitle {
+  font-size: 12px;
+  margin-right: 10px;
+  color: #4E4E4E;
+}

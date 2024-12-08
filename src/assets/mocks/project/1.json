@@ -1,0 +1,36 @@
+{
+  "name": "ProjectName",
+  "description": "description",
+  "progress": 70,
+  "documents_done": 2,
+  "sections": [
+    {
+      "section_id": 1,
+      "section_name": "Информация о проекте",
+      "section_progress": 50,
+      "actions": [
+        {
+          "action_id": 2,
+          "action_name": "Инфо",
+          "type": "document",
+          "prev_action": 1,
+          "done": true
+        }
+      ]
+    },
+    {
+      "section_id": 2,
+      "section_name": "Экономика",
+      "section_progress": 20,
+      "actions": [
+        {
+          "action_id": 3,
+          "action_name": "Инфо",
+          "type": "document",
+          "prev_action": 1,
+          "done": true
+        }
+      ]
+    }
+  ]
+}

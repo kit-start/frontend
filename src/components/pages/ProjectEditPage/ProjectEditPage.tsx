@@ -1,98 +1,99 @@
-import React, { useState, useEffect } from "react"; 
+import { useState } from "react";
+import { Breadcrumb, Input, Layout, Menu, theme } from "antd";
+import { useParams } from "react-router-dom";
+
 import ProgressBar from "../../common/Progress/ProgressBar";
-import { UserOutlined } from "@ant-design/icons";
-import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu, theme, Input } from "antd";
+import {
+	ActionType,
+	useGetProjectQuery,
+} from "../ProjectsPage/model/projectsApiSlice";
+
+import type { Action, Section } from "../ProjectsPage/model/projectsApiSlice";
 
 const { Content, Sider } = Layout;
 
+// TODO: Выпилить после интеграции
+const DEFAULT_PROJECT_ID = 1;
+
 const ProjectEditPage = () => {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+	const {
+		token: { colorBgContainer, borderRadiusLG },
+	} = theme.useToken();
+	const { id } = useParams();
+	const [breadcrumbItems, setBreadcrumbItems] = useState<{ title: string }[]>(
+		[],
+	);
+	const [documentText, setDocumentText] = useState("");
+	const [activeSection, setActiveSection] = useState<Section>();
+	const [activeAction, setActiveAction] = useState<Action>();
+	const { data } = useGetProjectQuery(id ? parseInt(id) : DEFAULT_PROJECT_ID);
 
-  const [breadcrumbItems, setBreadcrumbItems] = useState([
-    { title: "Инициализация проекта" },
-    { title: "" },
-  ]);
-  const [documentText, setDocumentText] = useState("");
-  const [isEditorVisible, setIsEditorVisible] = useState(false);
-  const [menuItems, setMenuItems] = useState<MenuProps["items"]>([]);
+	const handleMenuClick = (section: Section, action: Action) => {
+		setBreadcrumbItems([
+			{ title: section.section_name },
+			{ title: action.action_name },
+		]);
+		setActiveSection(section);
+		setActiveAction(action);
+	};
 
-  useEffect(() => {
-    const fetchMenuItems = async () => {
-      try {
-        const response = await fetch('src/components/pages/ProjectEditPage/menu.json'); 
-        const data = await response.json();
-        setMenuItems(data.items);
-      } catch (error) {
-        console.error("Ошибка при загрузке меню:", error);
-      }
-    };
-
-    fetchMenuItems();
-  }, []);
-
-  const handleMenuClick = (key: string) => {
-    const selectedItem = menuItems.flatMap(item => item.children).find(child => child.key === key);
-    const title = selectedItem ? selectedItem.label : ""; 
-
-    setIsEditorVisible(key === '3');
-    setBreadcrumbItems([
-      { title: "Инициализация проекта" },
-      { title: title },
-    ]);
-  };
-
-  return (
-    <Layout>
-      <ProgressBar />
-      <Layout>
-        <Sider width={300} style={{ background: colorBgContainer }}>
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
-            style={{ height: "100%", borderRight: 0 }}
-            items={menuItems.map(item => ({
-              ...item,
-              children: item.children.map(child => ({
-                ...child,
-                onClick: () => handleMenuClick(child.key),
-              })),
-            }))}
-          />
-        </Sider>
-        <Layout style={{ padding: "0 24px 24px" }}>
-          <Breadcrumb items={breadcrumbItems} style={{ margin: "16px 0" }} />
-          <Content
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            {isEditorVisible ? ( 
-              <Input.TextArea
-                value={documentText}
-                onChange={(e) => setDocumentText(e.target.value)}
-                rows={10}
-                placeholder="Введите текст документа..."
-              />
-            ) : (
-              <div>
-                <h3>Выберите опцию из меню.</h3>
-              </div>
-            )}
-          </Content>
-        </Layout>
-      </Layout>
-    </Layout>
-  );
+	return (
+		<Layout>
+			{data && activeSection && activeAction && (
+				<ProgressBar
+					name={data.name}
+					progress={data.progress}
+					step={activeSection.actions.findIndex(
+						({ action_id }) => action_id === activeAction.action_id,
+					)}
+				/>
+			)}
+			<Layout>
+				<Sider width={300} style={{ background: colorBgContainer }}>
+					<Menu
+						mode="inline"
+						defaultSelectedKeys={["1"]}
+						defaultOpenKeys={["sub1"]}
+						style={{ height: "100%", borderRight: 0 }}
+						items={data?.sections.map((section) => ({
+							key: section.section_id,
+							label: section.section_name,
+							children: section.actions.map((action) => ({
+								key: action.action_id,
+								label: action.action_name,
+								onClick: () => handleMenuClick(section, action),
+							})),
+						}))}
+					/>
+				</Sider>
+				<Layout style={{ padding: "0 24px 24px" }}>
+					<Breadcrumb items={breadcrumbItems} style={{ margin: "16px 0" }} />
+					<Content
+						style={{
+							padding: 24,
+							margin: 0,
+							minHeight: 280,
+							background: colorBgContainer,
+							borderRadius: borderRadiusLG,
+						}}
+					>
+						{activeAction?.type === ActionType.DOCUMENT ? (
+							<Input.TextArea
+								value={documentText}
+								onChange={(e) => setDocumentText(e.target.value)}
+								rows={10}
+								placeholder="Введите текст документа..."
+							/>
+						) : (
+							<div>
+								<h3>Выберите шаг проекта</h3>
+							</div>
+						)}
+					</Content>
+				</Layout>
+			</Layout>
+		</Layout>
+	);
 };
 
 export default ProjectEditPage;
-
-

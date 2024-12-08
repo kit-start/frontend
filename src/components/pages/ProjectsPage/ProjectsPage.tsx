@@ -1,43 +1,23 @@
-import React, { useEffect, useState } from "react";
 import { Layout, Button } from "antd";
 import { Link } from "react-router-dom";
+
 import ProjectCard from "../ProjectsPage/ProjectCard";
+import { useGetProjectsQuery } from "./model/projectsApiSlice";
+
+import type { FC } from "react";
 
 const { Content } = Layout;
 
-interface ProjectType {
-  id: number;
-  title: string;
-  description: string;
-  createdAt: string;
-  progress: number;
-  image: string;
-}
-
-const ProjecsPage: React.FC = () => {
-  const [projects, setProjects] = useState<ProjectType[]>([]);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch('src/components/pages/ProjectsPage/projects.json'); 
-        const data: ProjectType[] = await response.json();
-        setProjects(data);
-      } catch (error) {
-        console.error("Ошибка при загрузке проектов:", error);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+const ProjectsPage: FC = () => {
+  const { data } = useGetProjectsQuery();
 
   return (
     <Layout>
       <Content style={{ padding: "24px" }}>
         <h1>Список проектов</h1>
         <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+          {data?.projects.map((project) => (
+            <ProjectCard key={project.project_id} project={project} />
           ))}
         </div>
         <div style={{ position: 'fixed', bottom: '300px', right: '600px' }}>
@@ -57,4 +37,4 @@ const ProjecsPage: React.FC = () => {
   );
 };
 
-export default ProjecsPage;
+export default ProjectsPage;

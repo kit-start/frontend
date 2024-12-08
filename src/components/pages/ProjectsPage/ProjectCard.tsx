@@ -1,44 +1,53 @@
-import React from "react";
-import SimpleProgressBar from "../../common/Progress/SimpleProgressBar";
-import { Card } from "antd";
+import { Avatar, Flex, Progress } from "antd";
+import { FundProjectionScreenOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
-interface ProjectType {
-  id: number;
-  title: string;
-  description: string;
-  createdAt: string;
-  progress: number;
-  image: string;
-}
+import styles from "./ProjectsPage.module.scss";
+
+import type { FC } from "react";
+
+import type { Project } from "./model/projectsApiSlice";
 
 interface ProjectCardProps {
-  project: ProjectType;
+	project: Project;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
-  return (
-    <Card
-      style={{ width: 300, margin: "16px" }}
-      cover={
-        <img
-          alt={project.title}
-          src={project.image}
-          style={{ height: '200px', objectFit: 'cover' }}
-        />
-      }
-    >
-      <Card.Meta
-        title={project.title}
-        description={project.description}
-      />
-      <div style={{ textAlign: 'center' }}>
-        <SimpleProgressBar progress={project.progress} projectName={""} />
-      </div>
-      <p style={{ textAlign: 'left' }}>
-        Дата создания: {new Date(project.createdAt).toLocaleDateString()}
-      </p>
-    </Card>
-  );
+const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
+	return (
+		<Link to={`/project/${project.project_id}`} style={{ width: "100%" }}>
+			<Flex className={styles.card}>
+				<Avatar
+					shape="square"
+					size={100}
+					icon={<FundProjectionScreenOutlined />}
+				/>
+				<Flex vertical justify="space-between">
+					<h3 className={styles.cardTitle}>{project.name}</h3>
+					<p className={styles.cardDate}>Сфера: {project.field_name}</p>
+					<Flex vertical>
+						<p className={styles.cardDate}>
+							Дата создания: {new Date(project.created_at).toLocaleDateString()}
+						</p>
+						<p className={styles.cardDate}>
+							Дата редактирования:{" "}
+							{new Date(project.edited_at).toLocaleDateString()}
+						</p>
+					</Flex>
+				</Flex>
+				<Flex justify="center" className={styles.cardProgress}>
+					<span className={styles.cardProgressTitle}>
+						Прогресс: {project.progress}%
+					</span>
+					<Progress
+						percent={project.progress}
+						type="circle"
+						status="active"
+						size={20}
+					/>
+				</Flex>
+			</Flex>
+		</Link>
+	);
 };
 
 export default ProjectCard;

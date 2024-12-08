@@ -15,10 +15,6 @@ const menuItems = [
 		label: "Мои проекты",
 		key: "projects",
 	},
-	{
-		label: "Проработка проекта",
-		key: "project-edit",
-	},
 ];
 
 const userMenuItems = [

@@ -1,19 +1,29 @@
-import React from "react";
-import SimpleProgressBar from "./SimpleProgressBar"; 
-import StepProgressBar from "./StepProgressBar"; 
-import "./ProgressBar.css"; 
+import { Flex } from "antd";
 
-const ProgressBar: React.FC = () => {
-  const projectName = "Название проекта"; 
-  const progressPercent = 50;
-  const currentStep = 2; 
+import SimpleProgressBar from "./SimpleProgressBar";
+import StepProgressBar from "./StepProgressBar";
 
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', margin: '20px 0' }}>
-      <SimpleProgressBar projectName={projectName} progressPercent={progressPercent} />
-      <StepProgressBar currentStep={currentStep} />
-    </div>
-  );
+import type { FC } from "react";
+
+import styles from "./ProgressBar.module.scss";
+
+interface ProgressBarProps {
+	name: string;
+	progress: number;
+	step: number;
+}
+
+const ProgressBar: FC<ProgressBarProps> = ({ name, progress, step }) => {
+	return (
+		<Flex
+			justify="space-between"
+			align="flex-start"
+			className={styles.container}
+		>
+			<SimpleProgressBar projectName={name} progress={progress} />
+			<StepProgressBar currentStep={step} />
+		</Flex>
+	);
 };
 
 export default ProgressBar;

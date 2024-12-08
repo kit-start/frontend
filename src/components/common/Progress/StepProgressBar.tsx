@@ -1,6 +1,8 @@
-import React from "react";
 import { Steps } from "antd";
-import "./ProgressBar.css";
+
+import styles from "./ProgressBar.module.scss";
+
+import type { FC } from "react";
 
 const { Step } = Steps;
 
@@ -8,9 +10,9 @@ interface StepProgressBarProps {
   currentStep: number;
 }
 
-const StepProgressBar: React.FC<StepProgressBarProps> = ({ currentStep }) => {
+const StepProgressBar: FC<StepProgressBarProps> = ({ currentStep }) => {
   return (
-    <div style={{ width: '1400px', textAlign: 'center', marginRight: '120px' }}>
+    <div className={styles.stepContainer}>
       <h3>Шаги проекта</h3>
       <Steps current={currentStep}>
         <Step title="Шаг 1" description="Идея и цель" />

@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+import { getToken } from "../../../../utils/token-utils";
+
 export interface Project {
 	project_id: number;
 	name: string;
@@ -35,16 +37,21 @@ export interface ProjectInfoApiResponse extends Project {
 	sections: Section[];
 }
 
-interface ProjectsApiResponse {
-	projects: Project[];
-}
+type ProjectsApiResponse = Project[];
 
 export const projectsApiSlice = createApi({
-	baseQuery: fetchBaseQuery({ baseUrl: "/src/assets/mocks" }),
+	baseQuery: fetchBaseQuery({
+		baseUrl: "https://172.12.99.190/api",
+		headers: { Authorization: `Bearer ${getToken()}` },
+	}),
 	reducerPath: "projectsApi",
 	endpoints: (build) => ({
-		getProjects: build.query<ProjectsApiResponse, void>({ query: () => "/projects.json", }),
-		getProject: build.query<ProjectInfoApiResponse, number>({ query: (project_id) => `/project/${project_id}.json`, }),
+		getProjects: build.query<ProjectsApiResponse, void>({
+			query: () => "/projects",
+		}),
+		getProject: build.query<ProjectInfoApiResponse, number>({
+			query: (project_id) => `/project/${project_id}.json`,
+		}),
 	}),
 });
 

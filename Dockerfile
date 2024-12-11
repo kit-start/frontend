@@ -1,14 +1,15 @@
 FROM node
 
-WORKDIR /frontend
+WORKDIR /app
 
-COPY package.json .
-RUN npm i
+COPY . /app
+
+RUN npm install
+
+RUN npm run build
 
 COPY . ./
 
 EXPOSE 3000
-
-CMD ["npm", "run", "build"]
 
 CMD ["npm", "run", "preview"]

@@ -41,7 +41,7 @@ type ProjectsApiResponse = Project[];
 
 export const projectsApiSlice = createApi({
 	baseQuery: fetchBaseQuery({
-		baseUrl: "https://172.12.99.190/api",
+		baseUrl: "https://kitstart.ismit.ru/api/",
 		headers: { Authorization: `Bearer ${getToken()}` },
 	}),
 	reducerPath: "projectsApi",

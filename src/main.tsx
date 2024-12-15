@@ -13,7 +13,7 @@ import "./index.scss";
 import type { User } from "oidc-client-ts";
 
 const oidcConfig = {
-	authority: "https://172.12.99.164/realms/ISM",
+	authority: "https://keycloak.ismit.ru/realms/ISM",
 	clientId: "web-app",
 	redirectUri: `${window.location.origin}${window.location.pathname}`,
 	clientSecret: "PAvpzYTOiqFLIAMTlJVLbBG8yIKEOVjr",

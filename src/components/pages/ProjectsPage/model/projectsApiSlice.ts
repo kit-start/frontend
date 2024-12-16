@@ -2,10 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { getToken } from "../../../../utils/token-utils";
 
+import type { Field } from "./fieldsApiSlice";
+
 export interface Project {
-	project_id: number;
+	id: string;
 	name: string;
-	field_name: string;
+	field: Field;
 	created_at: string;
 	edited_at: string;
 	progress: number;
@@ -18,23 +20,33 @@ export enum ActionType {
 }
 
 export interface Action {
-	action_id: number;
-	action_name: string;
+	id: number;
+	name: string;
+	info: string;
 	type: ActionType;
-	prev_action?: number;
+	prev_action_id?: string;
 	done: boolean;
 }
 
 export interface Section {
-	section_id: number;
-	section_name: string;
-	section_progress: number;
+	id: number;
+	name: string;
+	progress: number;
 	actions: Action[];
 }
 
-export interface ProjectInfoApiResponse extends Project {
-	documents_done: number;
+export interface ProjectInfoField extends Field {
 	sections: Section[];
+}
+
+export interface ProjectInfoApiResponse extends Project {
+	field: ProjectInfoField;
+}
+
+export interface CreateProjectProps {
+	name: string;
+	field_id: string;
+	description: string;
 }
 
 type ProjectsApiResponse = Project[];
@@ -49,10 +61,17 @@ export const projectsApiSlice = createApi({
 		getProjects: build.query<ProjectsApiResponse, void>({
 			query: () => "/projects",
 		}),
-		getProject: build.query<ProjectInfoApiResponse, number>({
-			query: (project_id) => `/project/${project_id}.json`,
+		getProject: build.query<ProjectInfoApiResponse, string>({
+			query: (project_id) => `/projects/${project_id}`,
+		}),
+		createProject: build.mutation<ProjectInfoApiResponse, CreateProjectProps>({
+			query: (body) => ({
+				url: `/projects`,
+				method: 'POST',
+				body
+			}),
 		}),
 	}),
 });
 
-export const { useGetProjectsQuery, useGetProjectQuery } = projectsApiSlice;
+export const { useGetProjectsQuery, useGetProjectQuery, useCreateProjectMutation } = projectsApiSlice;

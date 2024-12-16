@@ -14,7 +14,7 @@ interface ProjectCardProps {
 
 const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
 	return (
-		<Link to={`/project/${project.project_id}`} style={{ width: "100%" }}>
+		<Link to={`/project/${project.id}`} style={{ width: "100%" }}>
 			<Flex className={styles.card}>
 				<Avatar
 					shape="square"
@@ -23,23 +23,23 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
 				/>
 				<Flex vertical justify="space-between">
 					<h3 className={styles.cardTitle}>{project.name}</h3>
-					<p className={styles.cardDate}>Сфера: {project.field_name}</p>
+					<p className={styles.cardDate}>Сфера: {project.field.name}</p>
 					<Flex vertical>
 						<p className={styles.cardDate}>
 							Дата создания: {new Date(project.created_at).toLocaleDateString()}
 						</p>
 						<p className={styles.cardDate}>
 							Дата редактирования:{" "}
-							{new Date(project.edited_at).toLocaleDateString()}
+							{project.edited_at ? new Date(project.edited_at).toLocaleDateString() : "Не редактировано"}
 						</p>
 					</Flex>
 				</Flex>
 				<Flex justify="center" className={styles.cardProgress}>
 					<span className={styles.cardProgressTitle}>
-						Прогресс: {project.progress}%
+						Прогресс: {project.progress || 0}%
 					</span>
 					<Progress
-						percent={project.progress}
+						percent={project.progress || 0}
 						type="circle"
 						status="active"
 						size={20}

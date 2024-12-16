@@ -12,7 +12,7 @@ interface SimpleProgressBarProps {
 const SimpleProgressBar: FC<SimpleProgressBarProps> = ({ progress, projectName }) => {
   return (
     <div className={styles.simpleContainer}>
-        <h3>{projectName}</h3>
+        <h3 className={styles.title}>{projectName}</h3>
       <Progress
         percent={progress}
         status="active"

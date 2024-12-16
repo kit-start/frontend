@@ -11,12 +11,13 @@ import { setToken } from "./utils/token-utils";
 import "./index.scss";
 
 import type { User } from "oidc-client-ts";
+import ErrorBoundary from "antd/es/alert/ErrorBoundary";
 
 const oidcConfig = {
 	authority: "https://keycloak.ismit.ru/realms/ISM",
-	clientId: "web-app",
+	clientId: "kitstart-web-app",
 	redirectUri: `${window.location.origin}${window.location.pathname}`,
-	clientSecret: "PAvpzYTOiqFLIAMTlJVLbBG8yIKEOVjr",
+	clientSecret: "6W9gHBemf6O0VcLbRbTj3qsX7nrpSrVS",
 	autoSignIn: true,
 	automaticSilentRenew: true,
 	onSignIn: (userData: User | null) => {
@@ -36,13 +37,15 @@ if (container) {
 
 	root.render(
 		<StrictMode>
-			<Provider store={store}>
-				<BrowserRouter>
-					<AuthProvider {...oidcConfig}>
-						<App />
-					</AuthProvider>
-				</BrowserRouter>
-			</Provider>
+			<ErrorBoundary>
+				<Provider store={store}>
+					<BrowserRouter>
+						<AuthProvider {...oidcConfig}>
+							<App />
+						</AuthProvider>
+					</BrowserRouter>
+				</Provider>
+			</ErrorBoundary>
 		</StrictMode>,
 	);
 } else {

@@ -34,3 +34,16 @@
   top: 45px;
   right: 30px;
 }
+
+.projectsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.projectsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

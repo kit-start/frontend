@@ -6,15 +6,18 @@ import styles from "./ProjectsPage.module.scss";
 
 import type { FC } from "react";
 
-import type { Project } from "./model/projectsApiSlice";
-
+// Определяем интерфейс для пропсов компонента
 interface ProjectCardProps {
-	project: Project;
+	id: string;
+	name: string;
+	progress: number;
+	date: string;
+	field?: { name: string; info?: string; };
 }
 
-const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
+const ProjectCard: FC<ProjectCardProps> = ({ id, name, progress, date, field }) => {
 	return (
-		<Link to={`/project/${project.id}`} style={{ width: "100%" }}>
+		<Link to={`/projects/${id}`} style={{ width: "100%" }}>
 			<Flex className={styles.card}>
 				<Avatar
 					shape="square"
@@ -22,24 +25,20 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
 					icon={<FundProjectionScreenOutlined />}
 				/>
 				<Flex vertical justify="space-between">
-					<h3 className={styles.cardTitle}>{project.name}</h3>
-					<p className={styles.cardDate}>Сфера: {project.field.name}</p>
+					<h3 className={styles.cardTitle}>{name}</h3>
+					{field && <p className={styles.cardDate}>Сфера: {field.name}</p>}
 					<Flex vertical>
 						<p className={styles.cardDate}>
-							Дата создания: {new Date(project.created_at).toLocaleDateString()}
-						</p>
-						<p className={styles.cardDate}>
-							Дата редактирования:{" "}
-							{project.edited_at ? new Date(project.edited_at).toLocaleDateString() : "Не редактировано"}
+							Дата: {new Date(date).toLocaleDateString()}
 						</p>
 					</Flex>
 				</Flex>
 				<Flex justify="center" className={styles.cardProgress}>
 					<span className={styles.cardProgressTitle}>
-						Прогресс: {project.progress || 0}%
+						Прогресс: {progress || 0}%
 					</span>
 					<Progress
-						percent={project.progress || 0}
+						percent={progress || 0}
 						type="circle"
 						status="active"
 						size={20}

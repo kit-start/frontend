@@ -1,40 +1,60 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit"
 import { combineSlices, configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
-import { counterSlice } from "../components/common/counter (deprecated)/model/counterSlice";
-import { quotesApiSlice } from "../components/common/quotes (deprecated)/model/quotesApiSlice";
+// import { counterSlice } from "../components/common/counter (deprecated)/model/counterSlice";
+// import { quotesApiSlice } from "../components/common/quotes (deprecated)/model/quotesApiSlice";
 import { projectsApiSlice } from "../components/pages/ProjectsPage/model/projectsApiSlice";
 import { fieldsApiSlice } from "../components/pages/ProjectsPage/model/fieldsApiSlice";
+import { documentsApi } from "../services/documentsApi";
 
-// `combineSlices` automatically combines the reducers using
-// their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices(counterSlice, quotesApiSlice, projectsApiSlice, fieldsApiSlice)
-// Infer the `RootState` type from the root reducer
-export type RootState = ReturnType<typeof rootReducer>
+// Определяем тип для состояния авторизации
+interface AuthState {
+  token: string | null;
+  isAuthenticated: boolean;
+  user: any | null;
+}
 
-// The store setup is wrapped in `makeStore` to allow reuse
-// when setting up tests that need the same store config
+// Расширяем RootState, чтобы включить auth
+export interface RootState {
+  auth?: AuthState;
+  projectsApiSlice: ReturnType<typeof projectsApiSlice.reducer>;
+  fieldsApiSlice: ReturnType<typeof fieldsApiSlice.reducer>;
+  documentsApi: ReturnType<typeof documentsApi.reducer>;
+}
+
+// `combineSlices` автоматически комбинирует редьюсеры, используя их `reducerPath`
+const rootReducer = combineSlices(
+  projectsApiSlice, 
+  fieldsApiSlice, 
+  documentsApi
+)
+
+// Настройка хранилища обернута в `makeStore` для возможности повторного использования 
+// при настройке тестов, которым нужна та же конфигурация хранилища
 export const makeStore = (preloadedState?: Partial<RootState>) => {
   const store = configureStore({
     reducer: rootReducer,
-    // Adding the api middleware enables caching, invalidation, polling,
-    // and other useful features of `rtk-query`.
+    // Добавление API middleware позволяет включить кэширование, аннулирование, опрос 
+    // и другие полезные функции `rtk-query`.
     middleware: getDefaultMiddleware => {
-      return getDefaultMiddleware().concat(projectsApiSlice.middleware, fieldsApiSlice.middleware)
+      return getDefaultMiddleware().concat(
+        projectsApiSlice.middleware, 
+        fieldsApiSlice.middleware,
+        documentsApi.middleware
+      )
     },
     preloadedState,
   })
-  // configure listeners using the provided defaults
-  // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
+  // Настройка слушателей для функций типа `refetchOnFocus`/`refetchOnReconnect`
   setupListeners(store.dispatch)
   return store
 }
 
 export const store = makeStore()
 
-// Infer the type of `store`
+// Тип `store`
 export type AppStore = typeof store
-// Infer the `AppDispatch` type from the store itself
+// Тип `AppDispatch` из самого хранилища
 export type AppDispatch = AppStore["dispatch"]
 export type AppThunk<ThunkReturnType = void> = ThunkAction<
   ThunkReturnType,

@@ -1,33 +1,47 @@
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  border-bottom: 1px solid #e4e4e4;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .logo {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 36px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1677ff;
 }
 
 .menu {
-  border-bottom: none;
-  margin-right: 300px;
-}
-
-.userMenu {
-  border-inline-end: none !important;
+  flex: 1;
+  margin: 0 20px;
 }
 
 .avatar {
-  width: 32px;
-  background-color: #000;
+  cursor: pointer;
 }
 
 .icon {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 24px;
-  line-height: 24px;
-  color: #108ee9;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.userMenu {
+  min-width: 120px;
+}
+
+.loginButton {
+  margin-left: auto;
+}
+
+.demoButton {
+  margin-right: 16px; 
+}
+
+.authLoader {
+  margin-left: auto;
+  padding: 0 10px;
 }

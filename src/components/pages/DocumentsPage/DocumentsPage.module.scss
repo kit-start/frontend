@@ -1,0 +1,125 @@
+.documentsPage {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  h2 {
+    margin: 0 0 0 16px;
+    color: #1f2937;
+    flex-grow: 1;
+  }
+}
+
+.backButton {
+  min-width: 170px;
+}
+
+.documentsList {
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.actionsBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.documentsTable {
+  :global {
+    .ant-table-thead > tr > th {
+      background-color: #f9fafb;
+      font-weight: 500;
+    }
+    
+    .ant-table-tbody > tr:hover > td {
+      background-color: #f3f4f6;
+    }
+    
+    .ant-table-row {
+      cursor: pointer;
+    }
+  }
+}
+
+.uploadSection {
+  margin-top: 32px;
+  padding: 24px;
+  background-color: #f9fafb;
+  border-radius: 4px;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.spinContainer {
+  padding: 30px;
+  text-align: center;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+  text-align: center;
+  
+  p {
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #6b7280;
+  }
+}
+
+// Стили для значка файла
+:global(.anticon-file) {
+  color: #3b82f6;
+  font-size: 16px;
+}
+
+// Адаптивные стили
+@media (max-width: 768px) {
+  .documentsPage {
+    padding: 16px;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    h2 {
+      margin: 16px 0;
+    }
+    
+    .backButton {
+      width: 100%;
+    }
+  }
+  
+  :global {
+    .ant-table {
+      font-size: 14px;
+    }
+    
+    .ant-modal {
+      width: 95% !important;
+      max-width: none !important;
+    }
+  }
+} 

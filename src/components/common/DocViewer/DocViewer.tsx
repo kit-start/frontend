@@ -47,6 +47,7 @@ const DocViewer: React.FC<DocViewerProps> = ({
   const [isContainerReady, setIsContainerReady] = useState(false);
   const [selectionState, setSelectionState] = useState<{
     start: number;
+    isDeletion: boolean;
   } | null>(null);
 
   // Эффект для монтирования компонента
@@ -208,13 +209,33 @@ const DocViewer: React.FC<DocViewerProps> = ({
       const editableDiv = document.querySelector('[contenteditable="true"]');
       
       if (editableDiv) {
-        // Сохраняем только позицию начала выделения
         const preCaretRange = range.cloneRange();
         preCaretRange.selectNodeContents(editableDiv);
         preCaretRange.setEnd(range.startContainer, range.startOffset);
         
         setSelectionState({
-          start: preCaretRange.toString().length
+          start: preCaretRange.toString().length,
+          isDeletion: false
+        });
+      }
+    }
+  };
+
+  // Обработчик нажатия клавиш
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const editableDiv = document.querySelector('[contenteditable="true"]');
+      
+      if (editableDiv) {
+        const preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(editableDiv);
+        preCaretRange.setEnd(range.startContainer, range.startOffset);
+        
+        setSelectionState({
+          start: preCaretRange.toString().length,
+          isDeletion: e.key === 'Backspace' || e.key === 'Delete'
         });
       }
     }
@@ -233,9 +254,11 @@ const DocViewer: React.FC<DocViewerProps> = ({
     try {
       const range = document.createRange();
       const textLength = editableDiv.textContent?.length || 0;
-      const start = Math.min(selectionState.start, textLength);
       
-      // Находим позицию в тексте
+      const start = selectionState.isDeletion 
+        ? Math.min(selectionState.start - 1, textLength)
+        : Math.min(selectionState.start + 1, textLength);
+      
       let pos = 0;
       let found = false;
       
@@ -260,7 +283,6 @@ const DocViewer: React.FC<DocViewerProps> = ({
       }
       
       if (!found) {
-        // Если не нашли позицию, устанавливаем в конец
         range.selectNodeContents(editableDiv);
         range.collapse(false);
       }
@@ -269,7 +291,6 @@ const DocViewer: React.FC<DocViewerProps> = ({
       selection.addRange(range);
     } catch (error) {
       console.warn('Ошибка при восстановлении позиции курсора:', error);
-      // В случае ошибки устанавливаем курсор в конец
       const range = document.createRange();
       range.selectNodeContents(editableDiv);
       range.collapse(false);
@@ -481,15 +502,13 @@ const DocViewer: React.FC<DocViewerProps> = ({
               contentEditable={true}
               dangerouslySetInnerHTML={{ __html: editableContent }}
               onKeyDown={(e) => {
-                // Сохраняем позицию курсора перед любым изменением
-                saveSelection();
+                handleKeyDown(e);
               }}
               onMouseUp={saveSelection}
               onInput={(e) => {
                 const newContent = e.currentTarget.innerHTML;
                 setEditableContent(newContent);
                 
-                // Восстанавливаем позицию курсора после обновления содержимого
                 requestAnimationFrame(() => {
                   restoreSelection();
                 });

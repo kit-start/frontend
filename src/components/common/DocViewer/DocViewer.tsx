@@ -48,6 +48,8 @@ const DocViewer: React.FC<DocViewerProps> = ({
   const [selectionState, setSelectionState] = useState<{
     start: number;
     isDeletion: boolean;
+    textLength: number;
+    isSingleCharDeletion: boolean;
   } | null>(null);
 
   // Эффект для монтирования компонента
@@ -215,7 +217,9 @@ const DocViewer: React.FC<DocViewerProps> = ({
         
         setSelectionState({
           start: preCaretRange.toString().length,
-          isDeletion: false
+          isDeletion: false,
+          textLength: editableDiv.textContent?.length || 0,
+          isSingleCharDeletion: false
         });
       }
     }
@@ -233,9 +237,13 @@ const DocViewer: React.FC<DocViewerProps> = ({
         preCaretRange.selectNodeContents(editableDiv);
         preCaretRange.setEnd(range.startContainer, range.startOffset);
         
+        const hasSelection = range.toString().length > 0;
+        
         setSelectionState({
           start: preCaretRange.toString().length,
-          isDeletion: e.key === 'Backspace' || e.key === 'Delete'
+          isDeletion: e.key === 'Backspace' || e.key === 'Delete',
+          textLength: editableDiv.textContent?.length || 0,
+          isSingleCharDeletion: (e.key === 'Backspace' || e.key === 'Delete') && !hasSelection
         });
       }
     }
@@ -253,11 +261,15 @@ const DocViewer: React.FC<DocViewerProps> = ({
 
     try {
       const range = document.createRange();
-      const textLength = editableDiv.textContent?.length || 0;
+      const currentTextLength = editableDiv.textContent?.length || 0;
+      
+      const lengthDiff = currentTextLength - selectionState.textLength;
       
       const start = selectionState.isDeletion 
-        ? Math.min(selectionState.start - 1, textLength)
-        : Math.min(selectionState.start + 1, textLength);
+        ? selectionState.isSingleCharDeletion
+          ? Math.min(selectionState.start - 1, currentTextLength)
+          : Math.min(selectionState.start, currentTextLength)
+        : Math.min(selectionState.start + lengthDiff, currentTextLength);
       
       let pos = 0;
       let found = false;
@@ -316,7 +328,7 @@ const DocViewer: React.FC<DocViewerProps> = ({
         
         // Вызываем onSave с новым содержимым
         if (onSave) {
-          await onSave(editableContent, documentName);
+        await onSave(editableContent, documentName);
         }
       }
 

@@ -1,6 +1,6 @@
-import { Layout, Button, Modal, Form, Input, Select, Typography, Alert, Empty, notification } from "antd";
+import { Layout, Button, Modal, Form, Input, Select, Typography, Alert, Empty, notification, Space } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { PlusOutlined, ExperimentOutlined } from "@ant-design/icons";
+import { PlusOutlined, ExperimentOutlined, RobotOutlined } from "@ant-design/icons";
 import { useState, useEffect, FC } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +9,8 @@ import { useCreateProjectMutation, useGetProjectsQuery, Project } from "./model/
 import { useGetFieldsQuery, Field } from "./model/fieldsApiSlice";
 import { getMockProjects, getMockFields, addMockProject } from "../../../utils/mockData";
 import { useDemoMode } from "../../../contexts/DemoContext";
+import { generateProjectDescription } from "../../../services/llmService";
+import { useNotificationContext } from "../../../contexts/NotificationContext";
 
 import styles from "./ProjectsPage.module.scss";
 
@@ -30,6 +32,8 @@ const ProjectsPage: FC = () => {
 	const [createProject] = useCreateProjectMutation();
 	const [isModalActive, setIsModalActive] = useState(false);
 	const { isDemoMode } = useDemoMode();
+	const { showError, showSuccess } = useNotificationContext();
+	const [isGenerating, setIsGenerating] = useState(false);
 
 	// Состояние для моковых данных
 	const [mockProjectsData, setMockProjectsData] = useState<Project[]>([]);
@@ -90,6 +94,39 @@ const ProjectsPage: FC = () => {
 				description: error?.message || 'Произошла неизвестная ошибка при создании проекта',
 				placement: 'topRight',
 			});
+		}
+	};
+
+	const handleGenerateDescription = async () => {
+		const projectName = form.getFieldValue('name');
+		const fieldId = form.getFieldValue('field_id');
+		
+		if (!projectName || !fieldId) {
+			showError('Пожалуйста, заполните название проекта и выберите направление');
+			return;
+		}
+
+		const selectedField = fieldsToDisplay?.find(field => String(field.id) === String(fieldId));
+		if (!selectedField) {
+			console.error('Не найдено направление:', { fieldId, availableFields: fieldsToDisplay });
+			showError('Не удалось определить направление проекта');
+			return;
+		}
+
+		try {
+			setIsGenerating(true);
+			const description = await generateProjectDescription({
+				projectName,
+				fieldName: selectedField.name
+			});
+			
+			form.setFieldValue('description', description);
+			showSuccess('Описание проекта успешно сгенерировано');
+		} catch (error) {
+			console.error('Ошибка при генерации описания:', error);
+			showError('Не удалось сгенерировать описание проекта');
+		} finally {
+			setIsGenerating(false);
 		}
 	};
 
@@ -180,6 +217,17 @@ const ProjectsPage: FC = () => {
 						<Form.Item
 							name="description"
 							label="Описание"
+							extra={
+								<Button
+									type="link"
+									icon={<RobotOutlined />}
+									onClick={handleGenerateDescription}
+									loading={isGenerating}
+									style={{ padding: 0 }}
+								>
+									Сгенерировать описание
+								</Button>
+							}
 						>
 							<TextArea rows={4} />
 						</Form.Item>

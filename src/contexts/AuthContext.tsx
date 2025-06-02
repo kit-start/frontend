@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useCallback, useMemo, useS
 import { useDemoMode } from './DemoContext';
 import { useNotificationContext } from './NotificationContext';
 import { KeycloakInstance } from 'keycloak-js';
-import Keycloak from 'keycloak-js';
+import keycloak from '../utils/keycloak';
 
 interface UserData {
   sub: string;
@@ -46,28 +46,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [keycloak, setKeycloak] = useState<Keycloak | null>(null);
+  const [keycloakInstance, setKeycloakInstance] = useState<KeycloakInstance | null>(null);
 
   useEffect(() => {
     const initKeycloak = async () => {
       try {
         setIsAuthenticating(true);
-        const keycloakInstance = new Keycloak({
-          url: process.env.REACT_APP_KEYCLOAK_URL || '',
-          realm: process.env.REACT_APP_KEYCLOAK_REALM || '',
-          clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || ''
-        });
-
-        const authenticated = await keycloakInstance.init({
+        
+        const authenticated = await keycloak.init({
           onLoad: 'check-sso',
           checkLoginIframe: false
         });
 
-        setKeycloak(keycloakInstance);
+        setKeycloakInstance(keycloak);
         setIsAuthenticated(authenticated);
 
         if (authenticated) {
-          const userInfo = await keycloakInstance.loadUserInfo();
+          const userInfo = await keycloak.loadUserInfo();
           setUserData(userInfo as UserData);
         }
       } catch (error) {
@@ -81,26 +76,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = useCallback(async () => {
-    if (keycloak) {
+    if (keycloakInstance) {
       try {
-        await keycloak.login();
+        await keycloakInstance.login();
       } catch (error) {
         console.error('Login failed:', error);
       }
     }
-  }, [keycloak]);
+  }, [keycloakInstance]);
 
   const logout = useCallback(async () => {
-    if (keycloak) {
+    if (keycloakInstance) {
       try {
-        await keycloak.logout();
+        await keycloakInstance.logout();
         setIsAuthenticated(false);
         setUserData(null);
       } catch (error) {
         console.error('Logout failed:', error);
       }
     }
-  }, [keycloak]);
+  }, [keycloakInstance]);
 
   return (
     <AuthContext.Provider
@@ -111,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         isLoading: isAuthenticating,
-        keycloak: null
+        keycloak: keycloakInstance
       }}
     >
       {children}

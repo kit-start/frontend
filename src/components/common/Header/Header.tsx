@@ -15,6 +15,10 @@ const publicMenuItems = [
 	{
 		label: "Главная",
 		key: "home",
+	},
+	{
+		label: "Биржа стартапов",
+		key: "exchange",
 	}
 ];
 

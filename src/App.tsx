@@ -9,6 +9,7 @@ import DocumentsPage from "./components/pages/DocumentsPage/DocumentsPage";
 import ProtectedRoute from "./components/common/ProtectedRoute/ProtectedRoute";
 import { useDemoMode } from "./contexts/DemoContext";
 import { useAuth } from "./contexts/AuthContext";
+import StartupExchange from "./pages/StartupExchange";
 
 const App = () => {
 	const { isAuthenticated, isLoading } = useAuth();
@@ -25,6 +26,7 @@ const App = () => {
 		<Routes>
 			<Route path="/" element={<Layout />}>
 				<Route index element={<HomePage />} />
+				<Route path="exchange" element={<StartupExchange />} />
 				<Route
 					path="projects"
 					element={
